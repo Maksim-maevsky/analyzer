@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: 14062022-add-part-trasactions
+      author: maksim_maevsky
+      changes:
+        - createTable:
+            tableName: transaction_part_infos
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: count
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: part_storage_id
+                  type: SMALLINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: part_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id:  14062022-add-ForeignKeyConstraint-part-id-to-transaction-part-infos
+      author:  maksim_maevsky
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: part_id
+            baseTableName: transaction_part_infos
+            constraintName: fk_transaction_part_info_part
+            referencedColumnNames: id
+            referencedTableName: parts
+
+  - changeSet:
+      id:  14062022-add-ForeignKeyConstraint-part-storage-to-transaction-parts
+      author:  maksim_maevsky
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: part_storage_id
+            baseTableName: transaction_part_infos
+            constraintName: fk_transaction_parts_storages_parts
+            referencedColumnNames: id
+            referencedTableName: part_storages

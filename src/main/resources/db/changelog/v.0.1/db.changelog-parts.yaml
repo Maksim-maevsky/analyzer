@@ -1,0 +1,243 @@
+databaseChangeLog:
+  - changeSet:
+      id: 14062022-add-parts
+      author: maksim_maevsky
+      changes:
+        - createTable:
+            tableName: parts
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    unique: true
+                    primaryKey: true
+              - column:
+                  name: code
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(300)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: brand_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+
+  - changeSet:
+      id: 14062022-add-part-infos
+      author: maksim_maevsky
+      changes:
+        - createTable:
+            tableName: part_infos
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: count
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: part_storage_id
+                  type: SMALLINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: part_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 14062022-add-file-info
+      author: maksim_maevsky
+      changes:
+        - createTable:
+            tableName: file_infos
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    unique: true
+                    primaryKey: true
+              - column:
+                  name: file_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: extension
+                  type: VARCHAR(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: mail_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 14062022-add-mail-info
+      author: maksim_maevsky
+      changes:
+        - createTable:
+            tableName: mail_infos
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    unique: true
+                    primaryKey: true
+              - column:
+                  name: subject
+                  type: VARCHAR(250)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: from_full_name
+                  type: VARCHAR(300)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 14062022-add-part-storages
+      author: maksim_maevsky
+      changes:
+        - createTable:
+            tableName: part_storages
+            columns:
+              - column:
+                  name: id
+                  type: SMALLINT
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    unique: true
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 14062022-add-brands
+      author: maksim_maevsky
+      changes:
+        - createTable:
+            tableName: brands
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    unique: true
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id:  14062022-add-ForeignKeyConstraint-part-storage-to-part-infos
+      author:  maksim_maevsky
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: part_storage_id
+            baseTableName: part_infos
+            constraintName: fk_part_info_storage_part
+            referencedColumnNames: id
+            referencedTableName: part_storages
+
+  - changeSet:
+      id:  14062022-add-ForeignKeyConstraint-part-id-to-part-infos
+      author:  maksim_maevsky
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: part_id
+            baseTableName: part_infos
+            constraintName: fk_part_info_part
+            referencedColumnNames: id
+            referencedTableName: parts
+
+  - changeSet:
+      id:  14062022-add-ForeignKeyConstraint-brand-id-to-parts
+      author:  maksim_maevsky
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: brand_id
+            baseTableName: parts
+            constraintName: fk_brand_part
+            referencedColumnNames: id
+            referencedTableName: brands
+
+  - changeSet:
+      id:  14062022-add-ForeignKeyConstraint-mail-id-to-file-info
+      author:  maksim_maevsky
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: mail_id
+            baseTableName: file_infos
+            constraintName: fk_file_mail
+            referencedColumnNames: id
+            referencedTableName: mail_infos
+
+  - changeSet:
+      id: 14062022-add-unique-constraint-code-brand-to-parts
+      author:  maksim_maevsky
+      changes:
+        - addUniqueConstraint:
+            columnNames: code, brand_id
+            constraintName: const_code_brand_id_parts
+            tableName: parts
+
+  - changeSet:
+      id: 14062022-add-unique-constraint-brand-name-to-brand
+      author:  maksim_maevsky
+      changes:
+        - addUniqueConstraint:
+            columnNames: name
+            constraintName: const_name_brands
+            tableName: brands
+
+  - changeSet:
+      id: 14062022-add-part-storage
+      author: maksim_maevsky
+      changes:
+        sqlFile:
+          dbms:  'postgresql'
+          path:  db\changelog\v.0.1\sql-import\import-part-storage.sql
+          stripComments:  true
