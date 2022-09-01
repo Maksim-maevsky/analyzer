@@ -5,6 +5,7 @@ import com.truckplast.analyzer.entity.FileInfo;
 import com.truckplast.analyzer.entity.MailInfo;
 import com.truckplast.analyzer.service.file.FileInfoService;
 import com.truckplast.analyzer.service.mail.MailCheckerService;
+import com.truckplast.analyzer.util.MailUtil;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -26,8 +27,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class MailCheckerServiceImpl implements MailCheckerService {
-
-    private final FlagTerm flagTerm;
 
     private final Folder folder;
 
@@ -52,7 +51,7 @@ public class MailCheckerServiceImpl implements MailCheckerService {
 
         log.info("Try to get messages");
 
-        Message messages[] = folder.search(flagTerm);
+        Message messages[] = folder.search(MailUtil.getFlagTerm(folder));
         List<Message> messageList = Arrays.asList(messages);
         isMessages(messageList);
         List<MailInfo> mailInfos = getMailInfos(messageList);

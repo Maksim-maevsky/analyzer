@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -40,16 +41,5 @@ public class MailConnectionConfig {
         store.connect(host, user, password);
 
         return store.getFolder(folderName);
-    }
-
-    @SneakyThrows
-    @Bean
-    public FlagTerm getFlagTerm(){
-
-        Folder folder =  getFolder();
-        folder.open(Folder.READ_WRITE);
-        Flags seen = new Flags(Flags.Flag.SEEN);
-
-        return new FlagTerm(seen, false);
     }
 }
