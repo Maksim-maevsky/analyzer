@@ -2,7 +2,6 @@ package com.truckplast.analyzer.service.file.impl;
 
 
 import com.truckplast.analyzer.dto.FileInfoDto;
-import com.truckplast.analyzer.dto.PartInfoDto;
 import com.truckplast.analyzer.dto.RefillResultDto;
 import com.truckplast.analyzer.entity.part.PartInfo;
 import com.truckplast.analyzer.service.file.FileCreatorService;

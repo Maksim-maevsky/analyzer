@@ -16,9 +16,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-
-import static java.util.Set.of;
+import java.util.Set;
 
 @Service
 @Data
@@ -35,13 +33,13 @@ public class AnalyzerFacadeImpl implements AnalyzerFacade {
     @Override
     public void differenceBetweenWarehouses() {
 
-        Set<String> target =  Set.of("PLASTIC", "TANGDE");
+        Set<String> target = Set.of("PLASTIC", "TANGDE");
         Set<String> current = Set.of("MIKHNEVO");
 
         RefillRequestDto refillRequestDto = new RefillRequestDto();
         refillRequestDto.setCurrentPartStorageNameSet(current);
         refillRequestDto.setTargetPartStorageNameSet(target);
-        RefillResponseDto refillResponseDto =  partService.getRefilledInfo(refillRequestDto);
+        RefillResponseDto refillResponseDto = partService.getRefilledInfo(refillRequestDto);
         RefillResultDto refillResultDto = partAnalyzerService.getRefillPartStorageInfo(refillResponseDto);
         FileInfoDto fileInfoDto = fileCreatorService.getFile(refillResultDto);
         refillResultDto.setFileInfoDto(fileInfoDto);

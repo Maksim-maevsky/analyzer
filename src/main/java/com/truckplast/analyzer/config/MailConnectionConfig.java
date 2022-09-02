@@ -6,13 +6,10 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
-import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.mail.search.FlagTerm;
 import java.util.Properties;
 
 @Configuration

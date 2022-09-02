@@ -23,7 +23,6 @@ import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -159,19 +158,15 @@ public class FileParserServiceImpl implements FileParserService {
             Row nextRow = firstSheet.getRow(currentRow);
             PartInfo partInfo = iterateOneRowAndGetPart(nextRow);
 
-            if(partInfo != null) parts.add(partInfo);
+            if (partInfo != null) parts.add(partInfo);
 
         }
     }
 
     private boolean checkFirstRow(int currentRow) {
 
-        if (currentRow == ParserConstant.FIRST_ROW) {
+        return currentRow == ParserConstant.FIRST_ROW;
 
-            return true;
-
-        }
-        return false;
     }
 
     private short setPartStorageIdAndId(String storageKey, List<PartInfo> parts) {

@@ -39,7 +39,7 @@ public class MailCheckerServiceImpl implements MailCheckerService {
 
         log.info("Try to get messages");
 
-        Message messages[] = folder.search(MailUtil.getFlagTerm(folder));
+        Message[] messages = folder.search(MailUtil.getFlagTerm(folder));
         List<Message> messageList = Arrays.asList(messages);
         isMessages(messageList);
         List<MailInfo> mailInfos = getMailInfos(messageList);
@@ -66,7 +66,7 @@ public class MailCheckerServiceImpl implements MailCheckerService {
 
         List<MailInfo> mailList = new ArrayList<>();
 
-        messageList.forEach((message) -> mailList.add(getMailInfoAndSetAttachment(message)));
+        messageList.forEach(message -> mailList.add(getMailInfoAndSetAttachment(message)));
 
 
         return mailList;

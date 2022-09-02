@@ -19,9 +19,9 @@ public final class PartStorageConstant {
     public static final String PLASTIC_STORAGE_NAME = "PLASTIC";
     public static final String MIKHNEVO_STORAGE_NAME = "MIKHNEVO";
 
-    public static final PartStorage TANGDE_STORAGE = new PartStorage(TANGDE_STORAGE_ID, "TANGDE");
-    public static final PartStorage PLASTIC_STORAGE = new PartStorage(PLASTIC_STORAGE_ID, "PLASTIC");
-    public static final PartStorage MIKHNEVO_STORAGE = new PartStorage(MIKHNEVO_STORAGE_ID, "MIKHNEVO");
+    public static final PartStorage TANGDE_STORAGE = new PartStorage(TANGDE_STORAGE_ID, TANGDE_STORAGE_NAME);
+    public static final PartStorage PLASTIC_STORAGE = new PartStorage(PLASTIC_STORAGE_ID, PLASTIC_STORAGE_NAME);
+    public static final PartStorage MIKHNEVO_STORAGE = new PartStorage(MIKHNEVO_STORAGE_ID, MIKHNEVO_STORAGE_NAME);
 
     public static final Set<String> PART_STORAGE_NAME_SET = Set.of(TANGDE_STORAGE_NAME, PLASTIC_STORAGE_NAME, MIKHNEVO_STORAGE_NAME);
 
