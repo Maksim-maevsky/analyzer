@@ -4,6 +4,7 @@ package com.truckplast.analyzer.service.file.impl;
 import com.truckplast.analyzer.dto.FileInfoDto;
 import com.truckplast.analyzer.dto.PartInfoDto;
 import com.truckplast.analyzer.dto.RefillResultDto;
+import com.truckplast.analyzer.entity.part.PartInfo;
 import com.truckplast.analyzer.service.file.FileCreatorService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -95,11 +96,11 @@ public class FileCreatorServiceImpl implements FileCreatorService {
         headerCell.setCellStyle(headerStyle);
 
 
-        List<PartInfoDto> partInfoDtoList = refillResultDto.getResultPartInfoDtoList();
+        List<PartInfo> partInfoDtoList = refillResultDto.getResultPartInfoDtoList();
 
         int rowCounter = 1;
 
-        for (PartInfoDto partInfoDto : partInfoDtoList) {
+        for (PartInfo partInfo : partInfoDtoList) {
 
             Row row = sheet.createRow(rowCounter);
 
@@ -110,16 +111,16 @@ public class FileCreatorServiceImpl implements FileCreatorService {
                 switch (i) {
 
                     case 0:
-                        cell.setCellValue(partInfoDto.getPart().getCode());
+                        cell.setCellValue(partInfo.getPart().getCode());
                         break;
                     case 1:
-                        cell.setCellValue(partInfoDto.getPart().getBrand().getName());
+                        cell.setCellValue(partInfo.getPart().getBrand().getName());
                         break;
                     case 2:
-                        cell.setCellValue(partInfoDto.getPart().getDescription());
+                        cell.setCellValue(partInfo.getPart().getDescription());
                         break;
                     case 3:
-                        cell.setCellValue(partInfoDto.getCount());
+                        cell.setCellValue(partInfo.getCount());
                         break;
 
                 }

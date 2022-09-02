@@ -1,5 +1,6 @@
 package com.truckplast.analyzer.dto;
 
+import com.truckplast.analyzer.entity.part.PartInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ public class RefillResultDto implements Serializable {
 
     private Set<String> currentPartStorageName;
 
-    private List<PartInfoDto> resultPartInfoDtoList;
+    private List<PartInfo> resultPartInfoDtoList;
 
     private FileInfoDto fileInfoDto;
 

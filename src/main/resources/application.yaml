@@ -14,7 +14,7 @@ spring:
     host: smtp.yandex.ru
     port: 587
     username: mm@opox.ru
-    password: ioq9plmQ
+    password: ${JAVAX_MAIL_PASSWORD}
     protocol: smtp
     properties.mail.smtp:
       auth: true

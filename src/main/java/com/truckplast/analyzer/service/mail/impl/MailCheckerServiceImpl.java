@@ -32,18 +32,6 @@ public class MailCheckerServiceImpl implements MailCheckerService {
 
     private final FileInfoService fileInfoService;
 
-    @Value("${javax.mail.user}")
-    private String user;
-
-    @Value("${javax.mail.password}")
-    private String password;
-
-    @Value("${javax.mail.host}")
-    private String host;
-
-    @Value("${javax.mail.folder}")
-    private String folderName;
-
 
     @Override
     @SneakyThrows
