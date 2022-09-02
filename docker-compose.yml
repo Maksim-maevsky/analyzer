@@ -1,0 +1,51 @@
+version: '3.8'
+
+volumes:
+  storage-data:
+
+services:
+
+  file_service:
+    container_name: file_service
+    restart: always
+    build:
+      context: ./file-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://part_service_database:5432/truckplast_db
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATASOURCE_USERNAME: postgres
+      JAVAX_MAIL_PASSWORD: ${JAVAX_MAIL_PASSWORD}
+    ports:
+      - 9992:9992
+    depends_on:
+      config_service:
+        condition: service_healthy
+    networks:
+      - default
+
+  part_service_database:
+    container_name: postgres
+    restart: always
+    image: postgres:13
+    ports:
+      - 5432:5432
+    volumes:
+      - storage-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: postgres
+      POSTGRES_DB: part_storage
+    networks:
+      - default
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    networks:
+      - default
