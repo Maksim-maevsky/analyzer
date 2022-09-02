@@ -23,7 +23,7 @@ spring:
 javax:
   mail:
     user: "mm@opox.ru"
-    password: "ioq9plmQ"
+    password: ${JAVAX_MAIL_PASSWORD}
     host: "imap.yandex.ru"
     folder: "SALE_HELPER"
 
