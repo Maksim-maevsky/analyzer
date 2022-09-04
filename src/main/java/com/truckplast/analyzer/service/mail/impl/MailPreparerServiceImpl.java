@@ -2,9 +2,9 @@ package com.truckplast.analyzer.service.mail.impl;
 
 
 import com.truckplast.analyzer.constant.MailConstant;
-import com.truckplast.analyzer.dto.pojo.RefillResultDto;
 import com.truckplast.analyzer.entity.part.PartInfo;
 import com.truckplast.analyzer.pojo.MailNotificationInfo;
+import com.truckplast.analyzer.pojo.RefillResult;
 import com.truckplast.analyzer.service.mail.MailPreparerService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -26,46 +26,31 @@ public class MailPreparerServiceImpl implements MailPreparerService {
     private String fromMail;
 
     @Override
-    public MailNotificationInfo refillPartStoragePreparation(RefillResultDto refillResultDto) {
+    public MailNotificationInfo refillPartStoragePreparation(RefillResult refillResult) {
 
         log.info("Try to get MailNotificationInfo.");
 
         MailNotificationInfo mailNotificationInfo = new MailNotificationInfo();
         mailNotificationInfo.setFrom(fromMail);
 
-        String targetStores = getPartStorageString(refillResultDto.getTargetPartStorageName());
-        String currentStores = getPartStorageString(refillResultDto.getCurrentPartStorageName());
-        String message = getRefillMessage(refillResultDto.getResultPartInfoDtoList());
-        String topic = String.format(MailConstant.REFILLING_MESSAGE_TOPIC, targetStores, currentStores);
+        String targetStorage = getPartStorageString(refillResult.getTargetPartStorageName());
+        String currentStorage = getPartStorageString(refillResult.getCurrentPartStorageName());
+        String message = "see attachment";
+        String topic = String.format(MailConstant.REFILLING_MESSAGE_TOPIC, targetStorage, currentStorage);
 
         mailNotificationInfo.setSubject(topic);
         mailNotificationInfo.setTo("mm@opox.ru");
         mailNotificationInfo.setMessage(message);
-        mailNotificationInfo.setFileInfoDto(refillResultDto.getFileInfoDto());
+        mailNotificationInfo.setFileInfoDto(refillResult.getFileInfoDto());
 
         return mailNotificationInfo;
-    }
-
-    private String getRefillMessage(List<PartInfo> partInfoDtoList) {
-
-        log.info("Try to complete message text.");
-
-        return partInfoDtoList.stream()
-                .map(partInfo -> String.format(MailConstant.REFILLING_MESSAGE_PART, partInfo.getPart().getCode(),
-                        partInfo.getPart().getBrand().getName(),
-                        partInfo.getPart().getDescription(), partInfo.getCount()))
-                .collect(Collectors.joining(MailConstant.STRING_JOINER_DELIMITER));
     }
 
     private String getPartStorageString(Set<String> storageNames) {
 
         StringBuilder storage = new StringBuilder();
 
-        for (String s : storageNames) {
-
-            storage.append(s + " ");
-
-        }
+        storageNames.parallelStream().forEach(s -> storage.append(s + " "));
 
         return storage.toString();
     }

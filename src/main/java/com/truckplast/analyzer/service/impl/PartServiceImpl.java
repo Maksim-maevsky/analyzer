@@ -2,11 +2,11 @@ package com.truckplast.analyzer.service.impl;
 
 
 import com.truckplast.analyzer.constant.PartStorageConstant;
-import com.truckplast.analyzer.dto.pojo.PartStorageInfoDto;
-import com.truckplast.analyzer.dto.pojo.RefillRequestDto;
-import com.truckplast.analyzer.dto.pojo.RefillResponseDto;
 import com.truckplast.analyzer.entity.part.PartInfo;
 import com.truckplast.analyzer.exeption_handler.exception.WrongPartStorageNameException;
+import com.truckplast.analyzer.pojo.PartStorageInfo;
+import com.truckplast.analyzer.pojo.RefillRequest;
+import com.truckplast.analyzer.pojo.RefillResponse;
 import com.truckplast.analyzer.repository.PartInfoRepository;
 import com.truckplast.analyzer.service.PartService;
 import lombok.Data;
@@ -28,7 +28,7 @@ public class PartServiceImpl implements PartService {
 
 
     @Override
-    public RefillResponseDto getRefilledInfo(RefillRequestDto refillRequestDto) {
+    public RefillResponse getRefilledInfo(RefillRequest refillRequestDto) {
 
         log.info("Create RefillResponseDto by part storage names ");
 
@@ -38,20 +38,20 @@ public class PartServiceImpl implements PartService {
         List<PartInfo> targetPartInfoStorageList = partInfoRepository.getAllByPartStorageName(refillRequestDto.getTargetPartStorageNameSet());
         List<PartInfo> currentPartInfoStorageList = partInfoRepository.getAllByPartStorageName(refillRequestDto.getCurrentPartStorageNameSet());
 
-        PartStorageInfoDto targetPartStorageInfoDto = getPartStorageInfoDto(refillRequestDto.getTargetPartStorageNameSet(), targetPartInfoStorageList);
-        PartStorageInfoDto currentPartStorageInfoDto = getPartStorageInfoDto(refillRequestDto.getCurrentPartStorageNameSet(), currentPartInfoStorageList);
+        PartStorageInfo targetPartStorageInfo = getPartStorageInfoDto(refillRequestDto.getTargetPartStorageNameSet(), targetPartInfoStorageList);
+        PartStorageInfo currentPartStorageInfo = getPartStorageInfoDto(refillRequestDto.getCurrentPartStorageNameSet(), currentPartInfoStorageList);
 
-        return new RefillResponseDto(targetPartStorageInfoDto, currentPartStorageInfoDto);
+        return new RefillResponse(targetPartStorageInfo, currentPartStorageInfo);
     }
 
-    private PartStorageInfoDto getPartStorageInfoDto(Set<String> partStorageName, List<PartInfo> targetPartStorageList) {
+    private PartStorageInfo getPartStorageInfoDto(Set<String> partStorageName, List<PartInfo> targetPartStorageList) {
 
-        PartStorageInfoDto partStorageInfoDto = new PartStorageInfoDto();
+        PartStorageInfo partStorageInfo = new PartStorageInfo();
 
-        partStorageInfoDto.setPartStorageNameSet(partStorageName);
-        partStorageInfoDto.setPartList(targetPartStorageList);
+        partStorageInfo.setPartStorageNameSet(partStorageName);
+        partStorageInfo.setPartList(targetPartStorageList);
 
-        return partStorageInfoDto;
+        return partStorageInfo;
     }
 
     private void checkPartStorageName(String partStorageName) {
