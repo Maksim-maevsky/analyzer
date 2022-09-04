@@ -4,7 +4,6 @@ package com.truckplast.analyzer.service.file.impl;
 import com.truckplast.analyzer.constant.ParserConstant;
 import com.truckplast.analyzer.constant.PartStorageConstant;
 import com.truckplast.analyzer.entity.FileInfo;
-import com.truckplast.analyzer.entity.MailInfo;
 import com.truckplast.analyzer.entity.part.Brand;
 import com.truckplast.analyzer.entity.part.Part;
 import com.truckplast.analyzer.entity.part.PartInfo;
@@ -14,7 +13,6 @@ import com.truckplast.analyzer.exeption_handler.exception.WorkBookCreationIOExce
 import com.truckplast.analyzer.exeption_handler.exception.WrongPartStorageKeyException;
 import com.truckplast.analyzer.repository.*;
 import com.truckplast.analyzer.service.file.FileParserService;
-import com.truckplast.analyzer.service.mail.MailInfoService;
 import com.truckplast.analyzer.util.FileUtil;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -22,16 +20,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -47,8 +43,6 @@ public class FileParserServiceImpl implements FileParserService {
 
     private final FileInfoRepository fileInfoRepository;
 
-    private final MailInfoService mailInfoService;
-
     private final PartRepository partRepository;
 
     private final BrandRepository brandRepository;
@@ -57,56 +51,33 @@ public class FileParserServiceImpl implements FileParserService {
     private String filePath;
 
 
+    @Transactional
     @Override
-    public void pars(List<MailInfo> mailInfoList) {
+    public void parsAndSave(List<FileInfo> fileInfoList, UUID mailInfoId) {
 
-        log.info("Map mailInfoDtoList to mailInfoList");
+        log.info("Try to pars MailInfo");
+        fileInfoList.parallelStream().forEach(fileInfo -> {
+            parsFileInfos(fileInfo);
+            fileInfo.setMailInfoId(mailInfoId);
+            fileInfoRepository.save(fileInfo);
+        });
 
-        mailInfoService.setLocalDateTimeAndId(mailInfoList);
-
-        log.info("Try to save mailInfoList");
-        mailInfoService.saveAll(mailInfoList);
-
-        parsMailInfos(mailInfoList);
 
     }
 
+    private void parsFileInfos(FileInfo fileInfo) {
 
-    private void parsMailInfos(List<MailInfo> mailInfoList) {
+        String fileName = getFileName(fileInfo);
 
-        for (MailInfo mailInfo : mailInfoList) {
+        log.info("Try to get File from byte array");
+        File file = FileUtil.getFile(filePath, fileName, fileInfo.getFileBytes());
 
-            log.info("Try to parse fileInfoList");
-            parsFileInfos(mailInfo);
+        String storageKey = fileInfo.getFileName();
+        PartStorage partStorage = getPartStorage(storageKey);
 
-        }
-    }
-
-    private void parsFileInfos(MailInfo mailInfo) {
-
-        for (FileInfo fileInfo : mailInfo.getFileInfoList()) {
-
-            List<PartInfo> parts = new ArrayList<>();
-            String fileName = getFileName(fileInfo);
-
-            log.info("Try to get File from byte array");
-            File file = FileUtil.getFile(filePath, fileName, fileInfo.getFileBytes());
-            tryParsAllFileRows(file, parts);
-
-            String storageKey = fileInfo.getFileName();
-            short partStorageId = setPartStorageIdAndId(storageKey, parts);
-
-            deletePreviousPartsAndSaveCurrent(parts, partStorageId);
-            setIdMailInfoIdAndSave(mailInfo.getId(), fileInfo);
-
-        }
-    }
-
-    private void setIdMailInfoIdAndSave(UUID mailInfoId, FileInfo fileInfo) {
-
-        fileInfo.setMailInfoId(mailInfoId);
+        List<PartInfo> parts = tryToGetPartInfoList(partStorage, file);
+        deletePreviousPartsAndSaveCurrent(parts, partStorage.getId());
         fileInfo.setId(UUID.randomUUID());
-        fileInfoRepository.save(fileInfo);
 
     }
 
@@ -123,14 +94,19 @@ public class FileParserServiceImpl implements FileParserService {
 
     }
 
-    private void tryParsAllFileRows(File file, List<PartInfo> parts) {
+    private List<PartInfo> tryToGetPartInfoList(PartStorage partStorage, File file) {
+
+        List<PartInfo> parts = new ArrayList<>();
 
         log.info("Parse file rows.");
 
         try (FileInputStream fileStream = new FileInputStream(file);
+
              Workbook workbook = WorkbookFactory.create(fileStream)) {
 
-            iterateAllRows(parts, workbook);
+            iterateAllRows(partStorage, parts, workbook);
+
+            return parts;
 
         } catch (FileNotFoundException e) {
 
@@ -147,40 +123,42 @@ public class FileParserServiceImpl implements FileParserService {
         }
     }
 
-    private void iterateAllRows(List<PartInfo> parts, Workbook workbook) {
+    private void iterateAllRows(PartStorage partStorage, List<PartInfo> parts, Workbook workbook) {
 
         Sheet firstSheet = workbook.getSheetAt(ParserConstant.FIRST_SHEET);
 
+        Map<String, Brand> brandMap = new HashMap<>();
+
         for (int currentRow = 0; currentRow < firstSheet.getLastRowNum(); currentRow++) {
 
-            if (checkFirstRow(currentRow)) continue;
+            if (isFirstRow(currentRow)) continue;
 
             Row nextRow = firstSheet.getRow(currentRow);
-            PartInfo partInfo = iterateOneRowAndGetPart(nextRow);
 
-            if (partInfo != null) parts.add(partInfo);
+
+            PartInfo partInfo = iterateOneRowAndGetPart(brandMap, nextRow);
+
+            if (partInfo != null) {
+
+                setPartStorageIdAndId(partStorage, partInfo);
+                parts.add(partInfo);
+            }
 
         }
     }
 
-    private boolean checkFirstRow(int currentRow) {
+    private boolean isFirstRow(int currentRow) {
 
         return currentRow == ParserConstant.FIRST_ROW;
 
     }
 
-    private short setPartStorageIdAndId(String storageKey, List<PartInfo> parts) {
+    private void setPartStorageIdAndId(PartStorage partStorage, PartInfo part) {
 
-        PartStorage partStorage = getPartStorage(storageKey);
+        part.setPartStorageId(partStorage.getId());
+        part.setId(UUID.randomUUID());
 
-        log.info("Set part storage id to parts");
 
-        parts.forEach(x -> {
-            x.setPartStorageId(partStorage.getId());
-            x.setId(UUID.randomUUID());
-        });
-
-        return partStorage.getId();
     }
 
     private PartStorage getPartStorage(String storageKey) {
@@ -189,47 +167,67 @@ public class FileParserServiceImpl implements FileParserService {
                 .orElseThrow(() -> new WrongPartStorageKeyException("Wrong part storage key " + storageKey));
     }
 
-    private PartInfo iterateOneRowAndGetPart(Row nextRow) {
+    private PartInfo iterateOneRowAndGetPart(Map<String, Brand> brandMap, Row nextRow) {
 
-        PartInfo partInfo = new PartInfo();
-        Part part = new Part();
-        Brand brand = new Brand();
+        PartInfo partInfo = getEmptyPartInfo();
 
         for (short currentColumn = 0; currentColumn <= 5; currentColumn++) {
 
             Cell cell = nextRow.getCell(currentColumn);
-            getAndSetCellTypeToPart(cell, partInfo, part, brand, currentColumn);
+            getAndSetCellTypeToPart(cell, partInfo, currentColumn);
             partInfo.setCreateDate(LocalDateTime.now());
 
         }
 
-        return checkBrandAndCompletePartInfo(partInfo, part, brand);
+        return checkBrandAndCompletePartInfo(brandMap, partInfo);
     }
 
-    private PartInfo checkBrandAndCompletePartInfo(PartInfo partInfo, Part part, Brand brand) {
+    private PartInfo getEmptyPartInfo() {
 
-        Optional<Brand> optionalBrand = brandRepository.getByName(brand.getName());
+        PartInfo partInfo = new PartInfo();
+        partInfo.setPart(new Part());
+        partInfo.getPart().setBrand(new Brand());
 
-        if (optionalBrand.isPresent()) {
+        return partInfo;
+    }
 
-            checkPartIdAndSetInfo(part, optionalBrand);
-            partInfo.setPart(part);
+    private PartInfo checkBrandAndCompletePartInfo(Map<String, Brand> brandMap, PartInfo partInfo) {
 
-            return partInfo;
+        String brandNameFromFile = partInfo.getPart().getBrand().getName();
+
+        Brand checkedBrand;
+
+        if (brandMap.containsKey(brandNameFromFile)) {
+
+            checkedBrand = brandMap.get(brandNameFromFile);
 
         } else {
 
-            log.error("Brand " + brand.getName() + " is no present.");
-            return null;
+            Optional<Brand> optionalBrand = brandRepository.getByName(brandNameFromFile);
 
+            if (optionalBrand.isPresent()) {
+
+                checkedBrand = optionalBrand.get();
+                brandMap.put(checkedBrand.getName(), checkedBrand);
+
+            } else {
+
+                log.error("Brand " + brandNameFromFile + " is no present.");
+
+                return null;
+            }
         }
+
+        partInfo.getPart().setBrand(checkedBrand);
+        checkPartIdAndSetInfo(partInfo.getPart());
+
+        return partInfo;
+
     }
 
-    private void checkPartIdAndSetInfo(Part part, Optional<Brand> optionalBrand) {
+    private void checkPartIdAndSetInfo(Part part) {
 
-        Brand brand;
-        brand = optionalBrand.get();
-        Optional<UUID> id = partRepository.getIdByCodeAndBrand(part.getCode(), brand.getName());
+        Optional<UUID> id = partRepository.getIdByCodeAndBrand(part.getCode(), part.getBrand().getName());
 
         if (id.isPresent()) {
 
@@ -239,27 +237,26 @@ public class FileParserServiceImpl implements FileParserService {
 
             part.setCreateDate(LocalDateTime.now());
             part.setId(UUID.randomUUID());
-            part.setBrand(brand);
 
             partRepository.save(part);
 
         }
     }
 
-    private void getAndSetCellTypeToPart(Cell cell, PartInfo partInfo, Part part, Brand brand, short column) {
+    private void getAndSetCellTypeToPart(Cell cell, PartInfo partInfo, short column) {
 
         switch (column) {
 
             case 0:
-                part.setCode(cell.getStringCellValue());
+                partInfo.getPart().setCode(cell.getStringCellValue());
                 break;
 
             case 1:
-                brand.setName(cell.getStringCellValue());
+                partInfo.getPart().getBrand().setName(cell.getStringCellValue());
                 break;
 
             case 2:
-                part.setDescription(cell.getStringCellValue());
+                partInfo.getPart().setDescription(cell.getStringCellValue());
                 break;
 
             case 3:

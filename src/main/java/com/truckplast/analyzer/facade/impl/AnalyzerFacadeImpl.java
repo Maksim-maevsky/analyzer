@@ -1,9 +1,9 @@
 package com.truckplast.analyzer.facade.impl;
 
 import com.truckplast.analyzer.dto.FileInfoDto;
-import com.truckplast.analyzer.dto.RefillRequestDto;
-import com.truckplast.analyzer.dto.RefillResponseDto;
-import com.truckplast.analyzer.dto.RefillResultDto;
+import com.truckplast.analyzer.dto.pojo.RefillRequestDto;
+import com.truckplast.analyzer.dto.pojo.RefillResponseDto;
+import com.truckplast.analyzer.dto.pojo.RefillResultDto;
 import com.truckplast.analyzer.facade.AnalyzerFacade;
 import com.truckplast.analyzer.pojo.MailNotificationInfo;
 import com.truckplast.analyzer.service.PartService;

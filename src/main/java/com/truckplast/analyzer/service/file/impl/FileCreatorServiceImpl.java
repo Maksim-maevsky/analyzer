@@ -2,7 +2,7 @@ package com.truckplast.analyzer.service.file.impl;
 
 
 import com.truckplast.analyzer.dto.FileInfoDto;
-import com.truckplast.analyzer.dto.RefillResultDto;
+import com.truckplast.analyzer.dto.pojo.RefillResultDto;
 import com.truckplast.analyzer.entity.part.PartInfo;
 import com.truckplast.analyzer.service.file.FileCreatorService;
 import lombok.Data;

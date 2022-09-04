@@ -1,9 +1,8 @@
 package com.truckplast.analyzer.service.analysis.impl;
 
 
-import com.truckplast.analyzer.dto.PartInfoDto;
-import com.truckplast.analyzer.dto.RefillResponseDto;
-import com.truckplast.analyzer.dto.RefillResultDto;
+import com.truckplast.analyzer.dto.pojo.RefillResponseDto;
+import com.truckplast.analyzer.dto.pojo.RefillResultDto;
 import com.truckplast.analyzer.entity.part.PartInfo;
 import com.truckplast.analyzer.service.analysis.PartAnalyzerService;
 import lombok.Data;
@@ -47,12 +46,10 @@ public class PartAnalyzerServiceImpl implements PartAnalyzerService {
         log.info("try to compare target and current list and get result list.");
 
         List<PartInfo> resultPartInfoDtoList = new ArrayList<>();
-
-        for (PartInfo currentPart : refillResponseDto.getCurrentPartStorageInfoDto().getPartList()){
-
-            iterateByTargetPartDtoListAndSetToResultPartDtoList(refillResponseDto, resultPartInfoDtoList, currentPart);
-
-        }
+        refillResponseDto
+                .getCurrentPartStorageInfoDto()
+                .getPartList()
+                .parallelStream().forEach(currentPart -> iterateByTargetPartDtoListAndSetToResultPartDtoList(refillResponseDto, resultPartInfoDtoList, currentPart));
 
         return resultPartInfoDtoList;
     }

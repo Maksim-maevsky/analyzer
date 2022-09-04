@@ -1,4 +1,4 @@
-package com.truckplast.analyzer.dto;
+package com.truckplast.analyzer.dto.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.mail.Multipart;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,8 @@ public class MailInfo {
     private String subject;
 
     private String from;
+
+    private Multipart multipart;
 
     private List<FileInfo> fileInfoList;
 

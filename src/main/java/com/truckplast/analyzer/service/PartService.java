@@ -1,8 +1,8 @@
 package com.truckplast.analyzer.service;
 
 
-import com.truckplast.analyzer.dto.RefillRequestDto;
-import com.truckplast.analyzer.dto.RefillResponseDto;
+import com.truckplast.analyzer.dto.pojo.RefillRequestDto;
+import com.truckplast.analyzer.dto.pojo.RefillResponseDto;
 
 public interface PartService {
 

@@ -2,9 +2,9 @@ package com.truckplast.analyzer.service.impl;
 
 
 import com.truckplast.analyzer.constant.PartStorageConstant;
-import com.truckplast.analyzer.dto.PartStorageInfoDto;
-import com.truckplast.analyzer.dto.RefillRequestDto;
-import com.truckplast.analyzer.dto.RefillResponseDto;
+import com.truckplast.analyzer.dto.pojo.PartStorageInfoDto;
+import com.truckplast.analyzer.dto.pojo.RefillRequestDto;
+import com.truckplast.analyzer.dto.pojo.RefillResponseDto;
 import com.truckplast.analyzer.entity.part.PartInfo;
 import com.truckplast.analyzer.exeption_handler.exception.WrongPartStorageNameException;
 import com.truckplast.analyzer.repository.PartInfoRepository;

@@ -1,5 +1,6 @@
-package com.truckplast.analyzer.dto;
+package com.truckplast.analyzer.pojo;
 
+import com.truckplast.analyzer.dto.FileInfoDto;
 import com.truckplast.analyzer.entity.part.PartInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +13,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RefillResultDto implements Serializable {
+public class RefillResult implements Serializable {
 
     private Set<String> targetPartStorageName;
 

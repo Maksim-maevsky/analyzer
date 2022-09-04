@@ -1,4 +1,4 @@
-package com.truckplast.analyzer.dto;
+package com.truckplast.analyzer.pojo;
 
 
 import com.truckplast.analyzer.entity.part.PartInfo;
@@ -12,7 +12,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PartStorageInfoDto {
+public class PartStorageInfo {
 
     private Set<String> partStorageNameSet;
 

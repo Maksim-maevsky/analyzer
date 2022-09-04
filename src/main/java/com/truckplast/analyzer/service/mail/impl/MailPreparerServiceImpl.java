@@ -2,8 +2,7 @@ package com.truckplast.analyzer.service.mail.impl;
 
 
 import com.truckplast.analyzer.constant.MailConstant;
-import com.truckplast.analyzer.dto.PartInfoDto;
-import com.truckplast.analyzer.dto.RefillResultDto;
+import com.truckplast.analyzer.dto.pojo.RefillResultDto;
 import com.truckplast.analyzer.entity.part.PartInfo;
 import com.truckplast.analyzer.pojo.MailNotificationInfo;
 import com.truckplast.analyzer.service.mail.MailPreparerService;

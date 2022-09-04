@@ -5,6 +5,7 @@ import com.truckplast.analyzer.service.file.FileInfoService;
 import com.truckplast.analyzer.util.DecoderUtil;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -28,13 +29,13 @@ public class FileInfoServiceImpl implements FileInfoService {
     private final DecoderUtil decoderUtil;
 
 
+    @SneakyThrows
     @Override
-    public List<FileInfo> iterateMimeBodyParts(Multipart multipart) throws MessagingException, IOException {
+    public List<FileInfo> iterateMimeBodyParts(Multipart multipart) {
 
         int countOfAttachments = 0;
         int countOfBodyParts = multipart.getCount();
         List<FileInfo> fileInfoList = new ArrayList<>();
-
 
         for (int partCount = 0; partCount < countOfBodyParts; partCount++) {
 
@@ -71,8 +72,8 @@ public class FileInfoServiceImpl implements FileInfoService {
         FileInfo fileInfo = new FileInfo();
         fileInfo.setExtension(FilenameUtils.getExtension(fullDecodeFileName));
         fileInfo.setFileName(fileName);
-
         byte[] bytes = IOUtils.toByteArray(part.getInputStream());
+
         fileInfo.setFileBytes(bytes);
 
         return fileInfo;

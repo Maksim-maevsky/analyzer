@@ -22,6 +22,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(incorrectData, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(InvalidContentException.class)
+    public ResponseEntity<IncorrectData> handleException(InvalidContentException exception) {
+
+        IncorrectData incorrectData = incorrectDataFilling(exception);
+
+        return new ResponseEntity<>(incorrectData, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(WrongPartStorageNameException.class)
     public ResponseEntity<IncorrectData> handleException(WrongPartStorageNameException exception) {
 
