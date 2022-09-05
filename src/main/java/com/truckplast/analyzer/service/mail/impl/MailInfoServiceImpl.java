@@ -67,8 +67,6 @@ public class MailInfoServiceImpl implements MailInfoService {
             setLocalDateTimeAndId(mailInfo);
             getFromAndSetToMailInfo(message, mailInfo);
             multipart = (Multipart) message.getContent();
-//            List<FileInfo> fileInfoList = fileInfoService.iterateMimeBodyParts(multipart);
-//            mailInfo.setFileInfoList(fileInfoList);
             mailInfo.setMultipart(multipart);
 
         } catch (IOException exception) {

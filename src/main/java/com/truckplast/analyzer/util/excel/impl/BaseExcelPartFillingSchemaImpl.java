@@ -48,7 +48,7 @@ public class BaseExcelPartFillingSchemaImpl implements ExcelPartFillingSchema {
         headerStyle.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.getIndex());
         headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-        XSSFFont font = ((XSSFWorkbook) workbook).createFont();
+        XSSFFont font = (workbook).createFont();
         font.setFontName("Arial");
         font.setFontHeightInPoints((short) 12);
         font.setBold(true);

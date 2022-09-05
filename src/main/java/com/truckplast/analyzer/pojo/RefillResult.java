@@ -19,7 +19,7 @@ public class RefillResult implements Serializable {
 
     private Set<String> currentPartStorageName;
 
-    private List<PartInfo> resultPartInfoDtoList;
+    private List<PartInfo> resultPartInfoList;
 
     private FileInfoDto fileInfoDto;
 

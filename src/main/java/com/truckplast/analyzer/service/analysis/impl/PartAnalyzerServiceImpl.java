@@ -34,7 +34,7 @@ public class PartAnalyzerServiceImpl implements PartAnalyzerService {
         Set<String> currentPartStorageNameSet = refillResponse.getCurrentPartStorageInfo().getPartStorageNameSet();
         Set<String> targetPartStorageNameSet = refillResponse.getTargetPartStorageInfo().getPartStorageNameSet();
 
-        refillResultDto.setResultPartInfoDtoList(resultPartInfoDtoList);
+        refillResultDto.setResultPartInfoList(resultPartInfoDtoList);
         refillResultDto.setCurrentPartStorageName(currentPartStorageNameSet);
         refillResultDto.setTargetPartStorageName(targetPartStorageNameSet);
 

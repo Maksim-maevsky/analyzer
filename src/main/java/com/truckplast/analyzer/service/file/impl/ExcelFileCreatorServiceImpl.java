@@ -52,7 +52,7 @@ public class ExcelFileCreatorServiceImpl implements FileCreatorService {
 
         schemaStorage.setFirstRow(workbook, sheet);
 
-        List<PartInfo> partInfoList = refillResult.getResultPartInfoDtoList();
+        List<PartInfo> partInfoList = refillResult.getResultPartInfoList();
         int rowCounter = 1;
 
         for (PartInfo partInfo : partInfoList) {

@@ -18,9 +18,6 @@ public class PartRowMapper implements RowMapper<Part> {
         part.setId(rs.getObject("id", java.util.UUID.class));
         part.setCode(rs.getString("code"));
         part.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime());
-        //partInfo.setPart(rs.getObject("part_id", java.util.UUID.class));
-//        part.setCount(rs.getInt("count"));
-//        part.setPartStorageId(rs.getShort("part_storage_id"));
 
         return part;
     }

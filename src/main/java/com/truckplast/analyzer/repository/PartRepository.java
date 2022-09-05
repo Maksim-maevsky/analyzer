@@ -11,6 +11,6 @@ public interface PartRepository {
 
     int save(Part part);
 
-    Optional<UUID> getIdByCodeAndBrand(String Code, String brand);
+    Optional<UUID> getIdByCodeAndBrand(String code, String brand);
 
 }
